@@ -23,6 +23,14 @@ functions:
       - http:
           path: /{proxy+}
           method: ANY
+    package:
+      include:
+        - app.py
+
+package:
+  individually: true
+  exclude:
+    - ./**
 
 plugins:
   - serverless-wsgi
