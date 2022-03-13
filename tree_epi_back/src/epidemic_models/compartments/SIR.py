@@ -2,11 +2,12 @@ import os
 import time
 import numpy as np
 from typing import Tuple, List
-from plotting.frame_plot import SIR_frame
-from epidemic_models.exceptions import IncorrectHostNumber
-from epidemic_models.utils.common_helpers import get_total_host_number
-from epidemic_models.utils.dynamics_helpers import (set_SIR, set_R0_trace_struct, new_infections)
-from params_and_config import GenericSimulationConfig, SaveOptions, RuntimeSettings, set_epidemic_parameters
+from tree_epi_back.src.plotting.frame_plot import SIR_frame
+from tree_epi_back.src.epidemic_models.exceptions import IncorrectHostNumber
+from tree_epi_back.src.epidemic_models.utils.common_helpers import get_total_host_number
+from tree_epi_back.src.epidemic_models.utils.dynamics_helpers import (set_SIR, set_R0_trace_struct, new_infections)
+from tree_epi_back.src.params_and_config import (GenericSimulationConfig, SaveOptions, RuntimeSettings,
+                                                 set_epidemic_parameters)
 
 
 def evolve_time_step(S_t1, I_t1, R_t1, t, epidemic_parameters, domain_config, dispersal, infectious_lt,

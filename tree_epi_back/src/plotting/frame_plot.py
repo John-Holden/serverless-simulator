@@ -1,8 +1,8 @@
 import numpy as np
-from typing import Optional, List
 from pandas import DataFrame
 import matplotlib.pyplot as plt
-from params_and_config import GenericSimulationConfig, SaveOptions, PATH_TO_DATA_ANIM
+from typing import Optional, List
+from tree_epi_back.src.params_and_config import GenericSimulationConfig, PATH_TO_DATA_ANIM
 
 # Matplotlib style fixture
 pltParams = {'figure.figsize': (7.5, 5.5),

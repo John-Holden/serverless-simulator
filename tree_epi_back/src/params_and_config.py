@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from collections import namedtuple
 from typing import Optional, Union, Tuple
 from schematics.types import BaseType, StringType
-from epidemic_models.exceptions import InvalidDispersalException, InvalidDispersalParamsException
+from tree_epi_back.src.epidemic_models.exceptions import InvalidDispersalException, InvalidDispersalParamsException
 
 PATH_TO_TEMP_STORE = f'{os.getcwd()}/temp_dat_store/'
 PATH_TO_DATA_STORE = f'{os.getcwd()}/data_store/'
@@ -188,7 +188,7 @@ def pl_dispersal_func(dist: Union[np.ndarray, float], ell: tuple):
 
 
 # --------------Setter functions-------------- #
-def set_dispersal(model: Union[str, None], ADB_mode: Optional[bool] = False, dispersal_param: Optional = None,
+def set_dispersal(model: str, ADB_mode: Optional[bool] = False, dispersal_param: Optional = None,
                   normed: Optional[bool] = True) -> Dispersal:
     """
     Set the form/config of dispersal
@@ -322,35 +322,6 @@ def set_runtime(steps: int) -> Generic_runtime:
     """
     assert steps
     return Generic_runtime(steps, unit=1)
-
-
-def get_model_name(compartments: str, dispersal_model: str, sporulation_model: Optional[str] = None) -> str:
-    """
-    Get the model-name, based on sporulation and dispersal type
-    :param compartments:
-    :param dispersal_model:
-    :param sporulation_model:
-
-    :return:
-    """
-
-    if compartments not in Compartmentalised_models:
-        raise NotImplementedError(f'Expected models {Compartmentalised_models}, found type {compartments}')
-
-    name = False
-    if sporulation_model is None:
-        name = 'phi0'
-    elif sporulation_model == 'step':
-        name = 'phi1'
-    elif sporulation_model == 'peaked':
-        name = 'phi2'
-    elif not compartments:
-        raise Exception('Incorrectly defined sporulation')
-
-    if 'power' in dispersal_model and 'law' in dispersal_model:
-        return f'{compartments}-{name}-pl'
-    elif dispersal_model in ['Gaussian', 'gaussian', 'ga']:
-        return f'{compartments}-{name}-ga'
 
 
 def set_initial_conditions(distribution: str, number_infected: int) -> Initial_conditions:

@@ -1,9 +1,9 @@
 import numpy as np
 from typing import Tuple, Optional, Union, List
-from epidemic_models.utils.common_helpers import get_initial_host_number
-from params_and_config import (DomainConfig, Initial_conditions, I_lt, Infectious_life_time_distributions,
-                               Initial_infected_distributions, R0_tracker, Epidemic_parameters, Infection_dynamics,
-                               Dispersal)
+from tree_epi_back.src.epidemic_models.utils.common_helpers import get_initial_host_number
+from tree_epi_back.src.params_and_config import (DomainConfig, Initial_conditions, I_lt,
+                                                 Infectious_life_time_distributions, Initial_infected_distributions,
+                                                 R0_tracker, Epidemic_parameters, Infection_dynamics, Dispersal)
 
 
 def ij_distance(i: tuple, j: Union[tuple, list]) -> np.ndarray:

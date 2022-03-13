@@ -1,5 +1,6 @@
+from tree_epi_back.src.epidemic_models.utils.common_helpers import get_model_name
 from params_and_config import (set_ADB_runtime, set_dispersal, set_infection_dynamics, set_initial_conditions,
-                               set_domain_config, set_R0_trace, get_model_name, get_ADB_lifetimes, set_ADB_sporulation,
+                               set_domain_config, set_R0_trace, get_ADB_lifetimes, set_ADB_sporulation,
                                ADBSimulationConfig, SaveOptions, RuntimeSettings)
 
 

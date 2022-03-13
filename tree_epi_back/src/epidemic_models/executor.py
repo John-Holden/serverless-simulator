@@ -1,9 +1,9 @@
 import datetime as dt
 import warnings
 
-from epidemic_models.compartments import SIR
-from epidemic_models.utils import common_helpers
-from params_and_config import GenericSimulationConfig, RuntimeSettings, SaveOptions
+from tree_epi_back.src.epidemic_models.compartments import SIR
+from tree_epi_back.src.epidemic_models.utils import common_helpers
+from tree_epi_back.src.params_and_config import GenericSimulationConfig, RuntimeSettings, SaveOptions
 
 
 def generic_SIR(sim_context: GenericSimulationConfig, save_options: SaveOptions, runtime_settings: RuntimeSettings):

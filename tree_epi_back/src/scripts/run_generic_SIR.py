@@ -1,8 +1,8 @@
-from params_and_config import (set_runtime, set_dispersal, set_infection_dynamics, set_infectious_lt,
-                               set_initial_conditions, set_domain_config, set_R0_trace, get_model_name,
-                               GenericSimulationConfig, SaveOptions, RuntimeSettings)
-
 from epidemic_models import executor
+from tree_epi_back.src.epidemic_models.utils.common_helpers import get_model_name
+from tree_epi_back.src.params_and_config import (set_runtime, set_dispersal, set_infection_dynamics, set_infectious_lt,
+                                                 set_initial_conditions, set_domain_config, set_R0_trace,
+                                                 GenericSimulationConfig, SaveOptions, RuntimeSettings)
 
 
 def run_SIR():
