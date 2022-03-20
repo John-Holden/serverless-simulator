@@ -15,7 +15,6 @@ def evolve_time_step(S_t1, I_t1, R_t1, t, epidemic_parameters, domain_config, di
     # Find new infections
     new_I, del_S = new_infections(epidemic_parameters, domain_config, dispersal,
                                   S_t1, I_t1, t, infectious_lt, pr_approx)
-
     # S_tree -> I_tree
     if new_I[0]:
         I_t2_row = np.hstack((I_t1[0], new_I[0]))  # infected rows
@@ -57,7 +56,6 @@ def run_SIR(sim_context: GenericSimulationConfig, save_options: SaveOptions, rt_
     S, I, R = set_SIR(sim_context.domain_config,
                       sim_context.initial_conditions,
                       sim_context.infectious_lt)
-
     epidemic_parameters = set_epidemic_parameters(sim_context.domain_config.tree_density,
                                                   sim_context.infection_dynamics.beta_factor,
                                                   sim_context.dispersal,
@@ -79,14 +77,15 @@ def run_SIR(sim_context: GenericSimulationConfig, save_options: SaveOptions, rt_
         steps = tqdm(steps)
 
     start = time.time()
+    t = 0
     for t in steps:
+        print(f't = {t}')
         S, I, R = evolve_time_step(S, I, R, t,
                                    epidemic_parameters,
                                    sim_context.domain_config,
                                    sim_context.dispersal,
                                    sim_context.infectious_lt,
                                    sim_context.infection_dynamics.pr_approx)
-
         host_number_at_t = None
         try:
             host_number_at_t = len(S[0]) + len(I[0]) + len(R[0])

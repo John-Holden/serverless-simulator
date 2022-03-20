@@ -91,7 +91,6 @@ def SIR_frame(S: List[np.ndarray], I: List[np.ndarray], R: List[np.ndarray], t: 
         name = f'{PATH_TO_DATA_ANIM}/{frame_label(t)}'
         name = f'{name}.{ext}'
         plt.savefig(name)
-        np.save(name, [S, I, R])
 
     if show_frame:
         plt.show()

@@ -16,9 +16,9 @@ from typing import Optional, Union, Tuple
 from schematics.types import BaseType, StringType
 from tree_epi_back.src.epidemic_models.exceptions import InvalidDispersalException, InvalidDispersalParamsException
 
-PATH_TO_TEMP_STORE = f'{os.getcwd()}/temp_dat_store/'
-PATH_TO_DATA_STORE = f'{os.getcwd()}/data_store/'
-PATH_TO_DATA_ANIM = f'{os.getcwd()}/anim_data/temp_frames'
+PATH_TO_TEMP_STORE = f'{os.getcwd()}/tree_epi_back/src/temp_dat_store/'
+PATH_TO_DATA_STORE = f'{os.getcwd()}/tree_epi_back/src/data_store/'
+PATH_TO_DATA_ANIM = f'{os.getcwd()}/tree_epi_back/src/anim_data/temp_frames'
 
 # --------------Parameters and constants -------------- #
 ELL_ADB_GA = 195
@@ -377,7 +377,7 @@ def set_R0_trace(active: bool = False, first_gen_only: bool = True, get_distance
     return R0_tracker(active, get_distances, first_gen_only, transition_times, get_network)
 
 
-def set_domain_config(domain_type: str, scale_constant: int, tree_density: float, patch_size: Tuple[int, int],
+def set_domain_config(domain_type: str, scale_constant: int, tree_density: float, patch_size: Tuple[int],
                       ADB_mode: Optional[bool] = False) -> DomainConfig:
 
     if 10 <= scale_constant < 100:

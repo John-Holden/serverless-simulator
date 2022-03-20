@@ -203,7 +203,6 @@ def new_infections(epidemic_parameters: Epidemic_parameters,
                         combing n statistically independent events according to the exclusion principle
     :return: (new_infected_row, new_infected_col, infect_lt), (new_S_transition_indices)
     """
-
     if max_gen_bcd is not None:
         raise NotImplementedError('Max generation boundary condition')
 
