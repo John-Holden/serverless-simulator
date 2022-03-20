@@ -14,13 +14,10 @@ CORS(app)
 
 
 @app.route("/", methods=['POST'])
-def simulation_client():
+def simulation_request_handler():
     sim_parameters = request.get_json(force=True)
-    print(f'sim params : {sim_parameters}')
     try:
-        print('simulating: ')
         simulate(sim_parameters)
-        print('dome')
         return make_response(jsonify(message=f''), 200)
     except Exception as e:
         print('error: ', e)
@@ -29,15 +26,13 @@ def simulation_client():
 
 def simulate(sim_params: dict):
     sim_config = get_simulation_config(sim_params)
-
     rt_settings = RuntimeSettings()
     rt_settings.verbosity = 0
     rt_settings.frame_plot = True
-    rt_settings.frame_show = True
+    rt_settings.frame_show = False
     rt_settings.frame_freq = 2
     save_options = SaveOptions()
     save_options.frame_save = True
-
     generic_SIR(sim_config, save_options, rt_settings)
 
 
@@ -46,18 +41,16 @@ def get_simulation_config(sim_params: dict):
     dispersal_param = sim_params['dispersal_param']
     dispersal = set_dispersal(dispersal_model, dispersal_param)
 
-    domain_size = sim_params['domain_size']
-    host_number = sim_params['host_number']
-
+    domain_size = tuple(map(int, sim_params['domain_size']))
+    host_number = int(sim_params['host_number'])
     domain = set_domain_config(domain_type='simple_square',
                                scale_constant=1,
                                patch_size=domain_size,
                                tree_density=get_tree_density(host_number, domain_size))
-
-    secondary_R0 = sim_params['secondary_R0']
     # todo convert R0 into infectious param...
-    infection_dynamics = set_infection_dynamics('SIR', 10)
-    runtime = set_runtime(sim_params['simulation_runtime'])
+    secondary_R0 = sim_params['secondary_R0']
+    infection_dynamics = set_infection_dynamics('SIR', 10, pr_approx=False)
+    runtime = set_runtime(int(sim_params['simulation_runtime']))
     infectious_lt = set_infectious_lt('exp', sim_params['infectious_lifetime'])
     initial_conditions = set_initial_conditions(sim_params['initially_infected_dist'],
                                                 sim_params['initially_infected_hosts'])
@@ -68,7 +61,7 @@ def get_simulation_config(sim_params: dict):
                                     'infectious_lt': infectious_lt,
                                     'initial_conditions': initial_conditions,
                                     'domain_config': domain,
-                                    'R0_trace': set_R0_trace(active=True, first_gen_only=False),
+                                    'R0_trace': set_R0_trace(active=False),
                                     'sim_name': get_model_name(infection_dynamics.compartments, dispersal.model_type)})
 
 

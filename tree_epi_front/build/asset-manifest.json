@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/static/css/main.6e75a9ad.css",
+    "main.js": "/static/js/main.62735eeb.js",
+    "static/js/787.02944742.chunk.js": "/static/js/787.02944742.chunk.js",
+    "static/media/sample-5s-copy1.mp4": "/static/media/sample-5s-copy1.9668a976fd6de4763e1b.mp4",
+    "static/media/sim.mp4": "/static/media/sim.5f55925d87b05fff5ee1.mp4",
+    "static/media/Thinking-of-getting-a-cat.png": "/static/media/Thinking-of-getting-a-cat.3147a978e9546ee0303d.png",
+    "index.html": "/index.html",
+    "main.6e75a9ad.css.map": "/static/css/main.6e75a9ad.css.map",
+    "main.62735eeb.js.map": "/static/js/main.62735eeb.js.map",
+    "787.02944742.chunk.js.map": "/static/js/787.02944742.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6e75a9ad.css",
+    "static/js/main.62735eeb.js"
+  ]
+}
