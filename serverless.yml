@@ -6,7 +6,7 @@ frameworkVersion: '3'
 
 custom:
   wsgi:
-    app: app.app
+    app: api.app
 
 provider:
   name: aws
@@ -29,13 +29,13 @@ functions:
           path: /{proxy+}
           method: ANY
     package:
-      include:
-        - app.py
+      patterns:
+        - tree_epi_back/**
 
 package:
   individually: true
-  exclude:
-    - ./**
+  patterns:
+    - '!./**'
 
 plugins:
   - serverless-wsgi

@@ -43,7 +43,7 @@ function InputParameters() {
                               "initially_infected_hosts": initiallyInfected,
                               "initially_infected_dist": initiallyInfectedDist})
       });
-      console.log(res)
+      console.log(res, 'herere')
       if (res.status === 200) {
         setMessage("successfull");
         console.log('successfull post')
