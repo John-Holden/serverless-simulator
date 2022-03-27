@@ -17,8 +17,8 @@ CORS(app)
 def simulation_request_handler():
     sim_parameters = request.get_json(force=True)
     try:
-        simulate(sim_parameters)
-        return make_response(jsonify(message=f''), 200)
+        # simulate(sim_parameters)
+        return make_response(jsonify(message=f'this is what you gave me mofo {sim_parameters} '), 200)
     except Exception as e:
         print('error: ', e)
         return make_response(jsonify(error=f'{e}'), 500)

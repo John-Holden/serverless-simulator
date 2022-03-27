@@ -4,10 +4,6 @@ service: tree-epidemic-sim
 
 frameworkVersion: '3'
 
-custom:
-  wsgi:
-    app: api.app
-
 provider:
   name: aws
   region: eu-west-2
@@ -31,6 +27,11 @@ functions:
     package:
       patterns:
         - tree_epi_back/**
+        - app.py
+
+custom:
+  wsgi:
+    app: app.app
 
 package:
   individually: true
