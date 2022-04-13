@@ -1,8 +1,9 @@
+import logging
 import numpy as np
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 from typing import Optional, List
-from tree_epi_back.src.params_and_config import GenericSimulationConfig, PATH_TO_DATA_ANIM
+from tree_epi_back.src.params_and_config import GenericSimulationConfig, PATH_TO_DATA_ANIM, PATH_TO_TEMP
 
 # Matplotlib style fixture
 pltParams = {'figure.figsize': (7.5, 5.5),
@@ -13,6 +14,8 @@ pltParams = {'figure.figsize': (7.5, 5.5),
 
 plt.rcParams.update(pltParams)
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # -------------------Simulation plotting methods-------------------#
 def frame_label(step):
@@ -26,23 +29,23 @@ def frame_label(step):
         return str(step)
 
 
-def SIR_fields(ens_df: DataFrame, fields: str, save_label: str):
-    import seaborn as sns
-    sns.set_theme(style='whitegrid')
-
-    fig, ax = plt.subplots(figsize=(10, 8))
-
-    if 'S' in fields:
-        sns.lineplot(data=ens_df, x="t", y="S", ax=ax, hue='type')
-    if 'I' in fields:
-        sns.lineplot(data=ens_df, x="t", y="I", ax=ax, hue='type')
-    if 'R' in fields:
-        sns.lineplot(data=ens_df, x="t", y="R", ax=ax, hue='type')
-
-    plt.legend([], [], frameon=False)
-    plt.tick_params(axis='both', labelsize=18)
-    plt.savefig(f'SIR-fields-{save_label}.pdf')
-    plt.show()
+# def SIR_fields(ens_df: DataFrame, fields: str, save_label: str):
+#     import seaborn as sns
+#     sns.set_theme(style='whitegrid')
+#
+#     fig, ax = plt.subplots(figsize=(10, 8))
+#
+#     if 'S' in fields:
+#         sns.lineplot(data=ens_df, x="t", y="S", ax=ax, hue='type')
+#     if 'I' in fields:
+#         sns.lineplot(data=ens_df, x="t", y="I", ax=ax, hue='type')
+#     if 'R' in fields:
+#         sns.lineplot(data=ens_df, x="t", y="R", ax=ax, hue='type')
+#
+#     plt.legend([], [], frameon=False)
+#     plt.tick_params(axis='both', labelsize=18)
+#     plt.savefig(f'SIR-fields-{save_label}.pdf')
+#     plt.show()
 
 
 def SIR_frame(S: List[np.ndarray], I: List[np.ndarray], R: List[np.ndarray], t: int,
@@ -67,6 +70,7 @@ def SIR_frame(S: List[np.ndarray], I: List[np.ndarray], R: List[np.ndarray], t: 
     :param title: plot title
     :return:
     """
+    save_dest = f'{PATH_TO_TEMP}/{frame_label(t)}.{ext}'
     rho = sim_context.domain_config.tree_density
     alpha = sim_context.domain_config.scale_constant
     fig, ax = plt.subplots(figsize=(7, 7))
@@ -88,9 +92,8 @@ def SIR_frame(S: List[np.ndarray], I: List[np.ndarray], R: List[np.ndarray], t: 
     plt.ylabel('L')
 
     if save_frame:
-        name = f'{PATH_TO_DATA_ANIM}/{frame_label(t)}'
-        name = f'{name}.{ext}'
-        plt.savefig(name)
+        logger.info(f' run_SIR - frame plot saving to {save_dest} @ step# {t}')
+        plt.savefig(save_dest)
 
     if show_frame:
         plt.show()

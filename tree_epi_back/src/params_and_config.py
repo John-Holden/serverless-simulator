@@ -16,9 +16,12 @@ from typing import Optional, Union, Tuple
 from schematics.types import BaseType, StringType
 from tree_epi_back.src.epidemic_models.exceptions import InvalidDispersalException, InvalidDispersalParamsException
 
+LAMBDA_TIMEOUT = 300
 PATH_TO_TEMP_STORE = f'{os.getcwd()}/tree_epi_back/src/temp_dat_store/'
 PATH_TO_DATA_STORE = f'{os.getcwd()}/tree_epi_back/src/data_store/'
 PATH_TO_DATA_ANIM = f'{os.getcwd()}/tree_epi_back/src/anim_data/temp_frames'
+PATH_TO_CPP_EXECUTABLE = f'{os.getcwd()}/tree_epi_back/cpp_executable/'
+PATH_TO_TEMP = '/tmp/anim_data'
 
 # --------------Parameters and constants -------------- #
 ELL_ADB_GA = 195
@@ -185,6 +188,14 @@ def pl_dispersal_func(dist: Union[np.ndarray, float], ell: tuple):
     """
     a, b = ell
     return (1 + dist/a)**(-b)
+
+
+def mkdir_tmp_store():
+    if os.path.exists(PATH_TO_TEMP):
+        return None
+
+    os.mkdir(PATH_TO_TEMP)
+    return True
 
 
 # --------------Setter functions-------------- #

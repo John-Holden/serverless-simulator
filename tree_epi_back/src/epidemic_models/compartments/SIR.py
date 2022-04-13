@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 import numpy as np
 from typing import Tuple, List
 from tree_epi_back.src.plotting.frame_plot import SIR_frame
@@ -7,7 +8,11 @@ from tree_epi_back.src.epidemic_models.exceptions import IncorrectHostNumber
 from tree_epi_back.src.epidemic_models.utils.common_helpers import get_total_host_number
 from tree_epi_back.src.epidemic_models.utils.dynamics_helpers import (set_SIR, set_R0_trace_struct, new_infections)
 from tree_epi_back.src.params_and_config import (GenericSimulationConfig, SaveOptions, RuntimeSettings,
-                                                 set_epidemic_parameters)
+                                                 set_epidemic_parameters, LAMBDA_TIMEOUT)
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def evolve_time_step(S_t1, I_t1, R_t1, t, epidemic_parameters, domain_config, dispersal, infectious_lt,
@@ -52,10 +57,14 @@ def run_SIR(sim_context: GenericSimulationConfig, save_options: SaveOptions, rt_
     """
 
     # initialise structures
+    logger.info(f' run_SIR - begging simulation', extra={'sim context': sim_context,
+                                                         'save options': save_options,
+                                                         'runtime settings': rt_settings})
     steps = range(sim_context.runtime.steps)
     S, I, R = set_SIR(sim_context.domain_config,
                       sim_context.initial_conditions,
                       sim_context.infectious_lt)
+
     epidemic_parameters = set_epidemic_parameters(sim_context.domain_config.tree_density,
                                                   sim_context.infection_dynamics.beta_factor,
                                                   sim_context.dispersal,
@@ -78,45 +87,54 @@ def run_SIR(sim_context: GenericSimulationConfig, save_options: SaveOptions, rt_
 
     start = time.time()
     t = 0
-    for t in steps:
-        print(f't = {t}')
-        S, I, R = evolve_time_step(S, I, R, t,
-                                   epidemic_parameters,
-                                   sim_context.domain_config,
-                                   sim_context.dispersal,
-                                   sim_context.infectious_lt,
-                                   sim_context.infection_dynamics.pr_approx)
-        host_number_at_t = None
-        try:
-            host_number_at_t = len(S[0]) + len(I[0]) + len(R[0])
-            assert host_number_at_t == host_number
-        except Exception:
-            raise IncorrectHostNumber(expected=host_number, actual=host_number_at_t)
+    try:
+        for t in steps:
+            if rt_settings.verbosity:
+                print(f't = {t}')
+            if time.time() - start > LAMBDA_TIMEOUT - 10:
+                logger.info(f' run_SIR - imminent lambda timout t = {time.time() - start} (s) of {LAMBDA_TIMEOUT}')
 
-        if save_options.save_field_time_series:
-            S_ts[t] = len(S[0])
-            I_ts[t] = len(I[0])
-            R_ts[t] = len(R[0])
+            S, I, R = evolve_time_step(S, I, R, t,
+                                       epidemic_parameters,
+                                       sim_context.domain_config,
+                                       sim_context.dispersal,
+                                       sim_context.infectious_lt,
+                                       sim_context.infection_dynamics.pr_approx)
+            host_number_at_t = None
+            try:
+                host_number_at_t = len(S[0]) + len(I[0]) + len(R[0])
+                assert host_number_at_t == host_number
+            except Exception:
+                raise IncorrectHostNumber(expected=host_number, actual=host_number_at_t)
 
-        if R0_struct:
-            'do stuff to update RO'
+            if save_options.save_field_time_series:
+                S_ts[t] = len(S[0])
+                I_ts[t] = len(I[0])
+                R_ts[t] = len(R[0])
 
-        if save_options.save_max_d:
-            # max_d_ts[t] = get_max_d(I)
-            ''
+            if R0_struct:
+                'do stuff to update RO'
 
-        if not len(I[0]):
-            break_condition = 'infected tree extinction'
-            break
+            # if save_options.save_max_d:
+                # max_d_ts[t] = get_max_d(I)
 
-        if save_options.save_st_fields and t % rt_settings.frame_freq == 0:
-            st_frames[f't_{t}'] = np.array([I[0], I[1]])  # 'spatio temporal' frames
+            if not len(I[0]):
+                break_condition = 'infected tree extinction'
+                break
 
-        if rt_settings.frame_plot and t % rt_settings.frame_freq == 0:
-            SIR_frame(S, I, R, t, sim_context, save_options.frame_save, rt_settings.frame_show)
+            if save_options.save_st_fields and t % rt_settings.frame_freq == 0:
+                st_frames[f't_{t}'] = np.array([I[0], I[1]])  # 'spatio temporal' frames
 
-        if t == sim_context.runtime.steps - 1:
-            break_condition = 'simulation time-steps exceeded'
+            if rt_settings.frame_plot and t % rt_settings.frame_freq == 0:
+                SIR_frame(S, I, R, t, sim_context, save_options.frame_save, rt_settings.frame_show)
+
+            if t == sim_context.runtime.steps - 1:
+                break_condition = 'simulation time-steps exceeded'
+    except Exception as e:
+        logger.info(f' run_SIR - Failed simulation', extra={'Error': e,
+                                                            'simulation time steps elapsed': f'{t}',
+                                                            'time elapsed': f'{time.time() - start} (s)'})
+        raise e
 
     sim_result = {"end": t,
                   "termination": break_condition,
@@ -140,3 +158,27 @@ def run_SIR(sim_context: GenericSimulationConfig, save_options: SaveOptions, rt_
         sim_result['tree-mortality-ratio'] = len(R[0]) / host_number
 
     return sim_result
+
+
+def SIR_function_animate(sim_context, save_options, runtime_settings):
+    from matplotlib import pyplot as plt
+    from matplotlib.animation import FuncAnimation, PillowWriter
+
+    fig = plt.figure()
+    ax = plt.axes(xlim=(0, 4), ylim=(-2, 2))
+    line = ax.scatter([], [], lw=3)
+
+    def init():
+        line.set_data([], [])
+        return line,
+
+    def animate(i):
+        print(f'step i = {i}')
+        x = np.linspace(0, 4, 1000)
+        y = np.sin(2 * np.pi * (x - 0.01 * i))
+        line.set_data(x, y)
+        return line,
+
+    anim = FuncAnimation(fig, animate, init_func=init, frames=50, blit=True)
+
+    anim.save('./sim-anim.mpg', writer='ffmpeg')
