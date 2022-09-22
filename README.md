@@ -1,4 +1,4 @@
-# tree-epidemics-lambda
+# Epidemic modelling with lambda functions
 Half-baked solution for a back-end epidemic simulator using aws lambda.
 AWS lambda functions, using the serverless framework, was completely the wrong approach.
 Namely, becuase computer runtime exceeds 30s and AWS API gateway is limited to 30 seconds max.
